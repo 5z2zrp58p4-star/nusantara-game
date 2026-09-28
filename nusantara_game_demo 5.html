@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Punagi Spin - Demo Poin</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;background:#080808;color:#fff}
+.app{max-width:520px;margin:auto;min-height:100vh;background:radial-gradient(circle at 50% 20%,#3a0b0b,#090909 55%);padding-bottom:30px}
+header{display:flex;align-items:center;justify-content:space-between;padding:18px 20px;border-bottom:2px solid #8d0000}
+.logo{font-size:25px;font-weight:800}.logo span{color:#ffcc33}
+.balance{margin:18px 18px 12px;padding:18px;border-radius:18px;background:linear-gradient(135deg,#350909,#150505);border:1px solid #7c1111}
+.balance small{color:#bbb}.amount{font-size:28px;font-weight:800;margin-top:5px}
+.notice{margin:12px 18px;padding:12px 14px;border-radius:12px;background:#211b08;border:1px solid #7e6714;color:#ffe99a;font-size:13px}
+.tabs{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;padding:10px 18px}
+.tab{border:0;border-radius:12px;padding:13px 6px;background:#08772d;color:#fff;font-weight:700;cursor:pointer}
+.tab.active{background:#0fa843;box-shadow:0 0 0 2px #70ff9b inset}
+.game{margin:8px 18px;background:#111;border:1px solid #5d1414;border-radius:20px;padding:18px}
+h2{margin:0 0 14px;font-size:20px}.reels{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin:12px 0}
+.reel{height:82px;border-radius:14px;background:linear-gradient(#fff,#ddd);color:#111;display:grid;place-items:center;font-size:38px;border:3px solid #b98920}
+button.primary{width:100%;padding:15px;border:0;border-radius:14px;background:#d71919;color:#fff;font-size:18px;font-weight:800;cursor:pointer}
+button.primary:disabled{opacity:.55;cursor:not-allowed}
+.info{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}.box{background:#191919;border-radius:12px;padding:12px}.box b{display:block;margin-bottom:4px}.muted{color:#aaa;font-size:12px}
+.section{display:none}.section.active{display:block}
+.row{display:flex;gap:8px}.row input{flex:1;padding:13px;border-radius:10px;border:1px solid #555;background:#090909;color:#fff}
+.history{margin-top:12px;max-height:170px;overflow:auto}.history div{padding:9px;border-bottom:1px solid #292929;font-size:13px}
+.footer{padding:18px;color:#888;text-align:center;font-size:11px}
+</style>
+</head>
+<body>
+<div class="app">
+<header><div class="logo">NUSANTARA<span>GAME</span></div><div>🎮 DEMO</div></header>
+
+<div class="balance">
+  <small>Saldo poin virtual</small>
+  <div class="amount"><span id="points">1000</span> POIN</div>
+</div>
+
+<div class="notice">Ini versi demo: poin tidak punya nilai uang, tidak bisa dicairkan, dan tidak terhubung ke rekening/e-wallet.</div>
+
+<div class="tabs">
+  <button class="tab active" data-tab="game">GAME</button>
+  <button class="tab" data-tab="bonus">BONUS</button>
+  <button class="tab" data-tab="riwayat">RIWAYAT</button>
+  <button class="tab" data-tab="akun">AKUN</button>
+</div>
+
+<section id="game" class="section active">
+<div class="game">
+<h2>🎰 Lucky Spin</h2>
+<div class="reels"><div class="reel" id="r1">🍒</div><div class="reel" id="r2">⭐</div><div class="reel" id="r3">💎</div></div>
+<button class="primary" id="spin">PUTAR — 10 POIN</button>
+<div class="info">
+<div class="box"><b>Hadiah</b><span class="muted">3 sama = +100 poin<br>2 sama = +25 poin<br>lainnya = +5 poin</span></div>
+<div class="box"><b>Mode</b><span class="muted">Poin virtual saja<br>Tanpa taruhan uang</span></div>
+</div>
+<div class="history" id="gameLog"></div>
+</div>
+</section>
+
+<section id="bonus" class="section">
+<div class="game"><h2>🎁 Bonus Harian</h2><p class="muted">Ambil 50 poin virtual untuk mencoba game.</p><button class="primary" id="claim">AMBIL 50 POIN</button></div>
+</section>
+
+<section id="riwayat" class="section">
+<div class="game"><h2>📜 Riwayat</h2><div id="history" class="history"><div>Belum ada aktivitas.</div></div></div>
+</section>
+
+<section id="akun" class="section">
+<div class="game"><h2>👤 Akun Demo</h2><p class="muted">Fitur deposit/withdraw uang asli sengaja tidak tersedia. Versi ini hanya menggunakan poin virtual untuk permainan.</p></div>
+</section>
+
+<div class="footer">Demo game lokal • Tidak menerima uang asli • Tidak menyediakan cash-out</div>
+</div>
+
+<script>
+const symbols=["🍒","🍋","⭐","💎","7️⃣","🔔"];
+let points=1000, logs=[];
+const pointsEl=document.getElementById("points");
+const reels=[document.getElementById("r1"),document.getElementById("r2"),document.getElementById("r3")];
+function update(){pointsEl.textContent=points.toLocaleString("id-ID");}
+function addLog(t){logs.unshift(t);document.getElementById("gameLog").innerHTML=logs.slice(0,8).map(x=>"<div>"+x+"</div>").join("");document.getElementById("history").innerHTML=logs.length?logs.map(x=>"<div>"+x+"</div>").join(""):"<div>Belum ada aktivitas.</div>";}
+document.querySelectorAll(".tab").forEach(b=>b.addEventListener("click",()=>{document.querySelectorAll(".tab").forEach(x=>x.classList.remove("active"));b.classList.add("active");document.querySelectorAll(".section").forEach(x=>x.classList.remove("active"));document.getElementById(b.dataset.tab).classList.add("active");}));
+document.getElementById("spin").addEventListener("click",()=>{
+ if(points<10)return;
+ points-=10; update();
+ const vals=[0,0,0].map(()=>symbols[Math.floor(Math.random()*symbols.length)]);
+ reels.forEach((r,i)=>r.textContent=vals[i]);
+ let prize=5;
+ if(vals[0]===vals[1]&&vals[1]===vals[2])prize=100;
+ else if(vals[0]===vals[1]||vals[1]===vals[2]||vals[0]===vals[2])prize=25;
+ points+=prize;update();
+ addLog("Putar: "+vals.join(" ")+" → +"+prize+" poin");
+});
+document.getElementById("claim").addEventListener("click",e=>{
+ if(e.target.disabled)return;
+ points+=50;update();e.target.disabled=true;e.target.textContent="BONUS SUDAH DIAMBIL";addLog("Bonus harian: +50 poin");
+});
+update();
+</script>
+</body>
+</html>
